@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import os
-from cfg import config
+import config
 
 DEFAULT_PORT = '6667'
 DEFAULT_AUTO_RECONNECT = 'True'
@@ -43,14 +43,18 @@ class ClientConfig(config.Config):
             if os.path.isfile(self.filename):
                 # file exists but can't be written to
                 print('[ERROR] Cannot write to file. Check directory and/or file permissions.')
+
             else:
                 # file doesn't exist but can't be created
                 print('[ERROR] Could not save configuration file. Check the path and/or directory permissions.')
+
+            raise IOError
+
         else:
             # successfully saved configuration to file
             print('Success!')
 
-    def load_client_config(self):
+    def load_client_config(self, first_load=False):
         # load existing configuration from a file
         print('Loading client configuration from {}... '.format(self.filename), end='')
         if not self.load_from_file():
@@ -61,16 +65,25 @@ class ClientConfig(config.Config):
             if os.path.isfile(self.filename):
                 # file exists but can't be accessed
                 print('[ERROR] Cannot access file. Check directory and/or file permissions.')
-            else:
-                # file doesn't exist -- make a new, empty configuration file then exit program
+                raise IOError
+
+            elif first_load:
+                # file doesn't exist on startup -- make a new, empty configuration file then exit program
                 print('File not found. Creating new empty configuration file... ', end='')
                 if not self.save_to_file():
-                    # failed to save new configuration file -- exit program
-                    print('Failed!\n[ERROR] Could not save new configuration file. Check the path and/or '
-                          'directory permissions.')
+                    # failed to save new configuration file
+                    print('Failed!\n[ERROR] Could not save new configuration file. Check the path and/or directory permissions.')
+                    raise IOError
+
                 else:
                     # successfully saved new configuration file
                     print('Success!')
+
+            else:
+                # file doesn't exist on subsequent loads --
+                print('[ERROR] File not found. Check the path and/or filename.')
+                raise IOError
+
         else:
             # successfully loaded configuration from file
             print('Success!')
@@ -122,3 +135,51 @@ class ClientConfig(config.Config):
     def get_logfile(self):
         # return the value of 'log_file' stored in the PATHS section
         return self.get_key('PATHS', 'log_file')
+
+    def set_nickname(self, nickname):
+        # sets the value of 'nickname'
+        return self.add_key('IDENTITY', 'nickname', str(nickname))
+
+    def set_username(self, username):
+        # sets the value of 'username'
+        return self.add_key('IDENTITY', 'username', str(username))
+
+    def set_realname(self, realname):
+        # sets the value of 'realname'
+        return self.add_key('IDENTITY', 'realname', str(realname))
+
+    def set_nickservpass(self, nickserv_password):
+        # sets the value of 'nickserv_password'
+        return self.add_key('IDENTITY', 'nickserv_password', str(nickserv_password))
+
+    def set_serveraddress(self, server_address):
+        # sets the value of 'server_address'
+        return self.add_key('CONNECTION', 'server_address', str(server_address))
+
+    def set_serverport(self, server_port):
+        # sets the value of 'server_port'
+        return self.add_key('CONNECTION', 'server_port', str(server_port))
+
+    def set_serverpass(self, server_password):
+        # sets the value of 'server_password'
+        return self.add_key('CONNECTION', 'server_password', str(server_password))
+
+    def set_autoreconnect(self, auto_reconnect):
+        # sets the value of 'auto_reconnect'
+        return self.add_key('CONNECTION', 'auto_reconnect', str(auto_reconnect))
+
+    def set_enablelogging(self, enable_logging):
+        # sets the value of 'enable_logging'
+        return self.add_key('CONNECTION', 'enable_logging', str(enable_logging))
+
+    def set_autojoinchans(self, autojoin_channels):
+        # sets the value of 'autojoin_channels'
+        return self.add_key('CONNECTION', 'autojoin_channels', str(autojoin_channels))
+
+    def set_configfile(self, config_file):
+        # sets the value of 'config_file'
+        return self.add_key('PATHS', 'config_file', str(config_file))
+
+    def set_logfile(self, log_file):
+        # sets the value of 'log_file'
+        return self.add_key('PATHS', 'log_file', str(log_file))

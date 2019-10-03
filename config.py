@@ -3,7 +3,7 @@ import configparser
 
 
 class Config:
-    def __init__(self, filename):
+    def __init__(self, filename=''):
         self.filename = filename
         self.config = configparser.ConfigParser()
 

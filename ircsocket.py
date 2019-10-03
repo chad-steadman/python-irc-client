@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 import socket
 
-DEFAULT_ENCODING = 'UTF-8'      # UTF-8 allows up to 4 bytes per char
-DEFAULT_LINE_ENDINGS = '\r\n'   # The specified line ending will automatically be appended to text sent
-DEFAULT_CONNECTION_TIMEOUT = 30 # Socket will time out after 30 seconds when initializing the connection
-DEFAULT_TIMEOUT = 180           # Socket will time out after 3 minutes of inactivity
-MAX_RECV_BYTES = 4096           # The max amount of bytes to be recieved
-DEBUG_MODE = True               # Causes printing of socket debug info to standard out
+DEFAULT_ENCODING = 'UTF-8'       # UTF-8 allows up to 4 bytes per char
+DEFAULT_LINE_ENDINGS = '\r\n'    # The specified line ending will automatically be appended to text sent
+DEFAULT_CONNECTION_TIMEOUT = 30  # Socket will time out after 30 seconds when initializing the connection
+DEFAULT_TIMEOUT = 180            # Socket will time out after 3 minutes of inactivity
+MAX_RECV_BYTES = 4096            # The max amount of bytes to be received
+DEBUG_MODE = True                # Causes printing of socket debug info to standard out
 
 
 class IrcSocket:
