@@ -10,19 +10,23 @@ class IrcClient:
 
     def register(self, nickname, username, realname, server_pwd=''):
         if server_pwd != '':
-            self.ircsocket.send_msg('PASS {}'.format(server_password))
+            self.ircsocket.send_msg('PASS {}'.format(server_pwd))
         self.ircsocket.send_msg('NICK {}'.format(nickname))
         self.ircsocket.send_msg('USER {} 0 * {}'.format(username, realname))
 
     def mainloop(self):
         while self.ircsocket.is_connected:
             self.ircsocket.recv_msg()
+        print('\r\nBye!')
 
 
 HOST = 'irc.rizon.net'
 PORT = 6667
+NICKNAME = 'Namdaets'
+USERNAME = 'namdaets'
+REALNAME = 'namdaets'
 
 ircclient = IrcClient()
 ircclient.connect(HOST, PORT)
-ircclient.register('Namdaets', 'namdaets', 'namdaets')
+ircclient.register(NICKNAME, USERNAME, REALNAME)
 ircclient.mainloop()
