@@ -45,7 +45,6 @@ class IrcSocket:
 
             else:
                 self._print_debug('Connection successful')
-                self._set_timeout(RECV_TIMEOUT)
                 self._is_connected = True
 
         else:
@@ -163,8 +162,9 @@ class IrcSocket:
         return self._is_connected
 
     def _set_timeout(self, new_timeout):
-        self._print_debug('Timeout set to {} second(s)'.format(new_timeout))
-        self._socket.settimeout(new_timeout)
+        if float(new_timeout) != self._socket.gettimeout():
+            self._print_debug('Timeout set to {} second(s)'.format(new_timeout))
+            self._socket.settimeout(new_timeout)
 
     def _print_debug(self, message, level='NORMAL', ignore_debug_flag=False):
         if level == 'ERROR':
