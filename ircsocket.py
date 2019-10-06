@@ -85,7 +85,7 @@ class IrcSocket:
             if encoded_msg == b'':
                 self._is_connected = False
                 self.disconnect()
-                raise OSError('Socket connection broken')
+                raise OSError('ERROR: Socket connection broken')
 
             else:
                 bytes_recd = len(encoded_msg)
