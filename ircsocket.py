@@ -81,7 +81,7 @@ class IrcSocket:
                 msg_len = len(encoded_msg)
                 bytes_sent = 0
 
-                self._set_timeout(SEND_TIEMOUT)
+                self._set_timeout(SEND_TIMEOUT)
 
                 # NOTE: This loop wrapping send() ensures the socket actually sends the whole message
                 while bytes_sent < msg_len:
@@ -89,7 +89,7 @@ class IrcSocket:
                         num_bytes = self._socket.send(encoded_msg[bytes_sent:])
 
                     except socket.timeout:
-                        error_message = 'Send failed: Operation timed out after {} second(s)'.format(SEND_TIEMOUT)
+                        error_message = 'Send failed: Operation timed out after {} second(s)'.format(SEND_TIMEOUT)
                         self._print_debug(error_message, 'ERROR')
                         raise SocketTimeout(error_message)
 
