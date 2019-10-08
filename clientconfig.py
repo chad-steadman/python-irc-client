@@ -11,7 +11,7 @@ DEFAULT_LOG_FILE = 'server.log'
 
 class ClientConfig(config.Config):
     def __init__(self, filename=DEFAULT_CONFIG_FILE):
-        super(ClientConfig, self).__init__(filename)
+        super().__init__(filename)
 
         # initialize default key/value pairs
         self.add_section('IDENTITY')
@@ -34,13 +34,13 @@ class ClientConfig(config.Config):
 
     def save_client_config(self):
         # save existing configuration to a file
-        print('Saving client configuration to {}... '.format(self.filename), end='')
+        print('Saving client configuration to {}... '.format(self.get_filename()), end='')
         if not self.save_to_file():
             # failed to save file -- check for errors
             print('Failed!')
-            
+
             # check if file exists
-            if os.path.isfile(self.filename):
+            if os.path.isfile(self.get_filename()):
                 # file exists but can't be written to
                 print('[ERROR] Cannot write to file. Check directory and/or file permissions.')
 
@@ -56,13 +56,13 @@ class ClientConfig(config.Config):
 
     def load_client_config(self, first_load=False):
         # load existing configuration from a file
-        print('Loading client configuration from {}... '.format(self.filename), end='')
+        print('Loading client configuration from {}... '.format(self.get_filename()), end='')
         if not self.load_from_file():
             # failed to load file -- check for errors
             print('Failed!')
 
             # check if file exists
-            if os.path.isfile(self.filename):
+            if os.path.isfile(self.get_filename()):
                 # file exists but can't be accessed
                 print('[ERROR] Cannot access file. Check directory and/or file permissions.')
                 raise IOError
