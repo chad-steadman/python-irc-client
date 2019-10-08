@@ -6,7 +6,7 @@ ENCODING = 'UTF-8'      # The method for encoding and decoding all messages (UTF
 LINE_ENDINGS = '\r\n'   # This is appended to all messages sent by the socket (should always be CRLF)
 CONNECTION_TIMEOUT = 30 # The socket will timeout after this many seconds when trying to initialize the connection
 RECV_TIMEOUT = 180      # The socket will timeout after this many seconds when trying to receive data
-SEND_TIEMOUT = 30       # The socket will timeout after this many seconds when trying to send data
+SEND_TIMEOUT = 30       # The socket will timeout after this many seconds when trying to send data
 MAX_RECV_BYTES = 4096   # The maximum amount of bytes to be received by the socket at a time
 DEBUG_MODE = True       # Allows printing of socket debug info (ERROR level messages ignore this flag)
 
@@ -96,7 +96,7 @@ class IrcSocket:
                     except socket.error as err:
                         error_message = 'Send failed: {}'.format(err)
                         self._print_debug(error_message, 'ERROR')
-                        self._is_connected = False # self.disconnect()
+                        self._is_connected = False  # self.disconnect()
                         raise SocketConnectionBroken(error_message)
 
                     else:
@@ -104,7 +104,7 @@ class IrcSocket:
                         if num_bytes == 0:
                             error_message = 'Send failed: Socket connection was closed unexpectedly'
                             self._print_debug(error_message, 'ERROR')
-                            self._is_connected = False # self.disconnect()
+                            self._is_connected = False  # self.disconnect()
                             raise SocketConnectionBroken(error_message)
 
                         bytes_sent += num_bytes
@@ -131,7 +131,7 @@ class IrcSocket:
             except socket.error as err:
                 error_message = 'Receive failed: {}'.format(err)
                 self._print_debug(error_message, 'ERROR')
-                self._is_connected = False # self.disconnect()
+                self._is_connected = False  # self.disconnect()
                 raise SocketConnectionBroken(error_message)
 
             else:
@@ -139,7 +139,7 @@ class IrcSocket:
                 if encoded_msg == b'':
                     error_message = 'Receive failed: Socket connection was closed unexpectedly'
                     self._print_debug(error_message, 'ERROR')
-                    self._is_connected = False # self.disconnect()
+                    self._is_connected = False  # self.disconnect()
                     raise SocketConnectionBroken(error_message)
 
                 else:
@@ -168,7 +168,7 @@ class IrcSocket:
                     # -
                     # END TODO
 
-                    return (raw_text, LINE_ENDINGS)
+                    return raw_text, LINE_ENDINGS
 
         else:
             error_message = 'Receive failed: Socket connection has not been established'
