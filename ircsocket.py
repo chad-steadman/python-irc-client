@@ -145,11 +145,10 @@ class IrcSocket:
                 else:
                     bytes_recd = len(encoded_msg)
 
-                    # TODO: Need to remove the -2 offset when the server omits line endings from its messages...
-                    # -
-                    raw_text = encoded_msg.decode(ENCODING)[:-2]
-                    # -
-                    # END TODO
+                    raw_text = encoded_msg.decode(ENCODING)
+
+                    if raw_text[-(len(LINE_ENDINGS)):] == LINE_ENDINGS:
+                        raw_text = raw_text[:-(len(LINE_ENDINGS))]
 
                     self._print_debug('<< RECV / {} Bytes: {}'.format(bytes_recd, raw_text))
 
