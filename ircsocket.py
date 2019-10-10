@@ -18,6 +18,17 @@ class IrcSocket:
         _socket -- Python socket object used for communicating back and forth with an IRC server.
         _is_connected -- Boolean value used to keep track of whether the connection is active at any given time.
 
+    Methods:
+        __init__() -- Initialize a socket and its connection status, but don't do anything else.
+        connect(host, port) -- Initialize a connection to an IRC server. Takes two arguments.
+        disconnect() -- Shutdown and close the socket.
+        reset() -- Shutdown, close, and then re-initialize the socket so it can connect again.
+        send_raw_text(raw_text) -- Encode and send a string to the IRC server. Takes one argument.
+        recv_raw_text() -- Receive and decode data from the IRC server.
+        is_connected() -- Return the connection status of the socket.
+        _set_timeout(new_timeout) -- Set the socket object's timeout in seconds. Takes one argument.
+        _print_debug(message, severity=, ignore_debug_flag=) -- Print socket debug info. Takes 1-3 arguments.
+
     Exceptions:
         SocketError -- A subclass of OSError, and is the generic parent class of all custom IrcSocket exceptions.
         SocketTimeout -- A socket operation times out.
