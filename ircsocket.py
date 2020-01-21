@@ -8,7 +8,7 @@ CONNECTION_TIMEOUT = 30  # The socket will timeout after this many seconds when 
 RECV_TIMEOUT = 180       # The socket will timeout after this many seconds when trying to receive data
 SEND_TIMEOUT = 30        # The socket will timeout after this many seconds when trying to send data
 MAX_RECV_BYTES = 4096    # The maximum amount of bytes to be received by the socket at a time
-DEBUG_MODE = True        # Allows printing of socket debug messages
+DEBUG_MODE = False       # Allows printing of socket debug messages
 
 
 class IrcSocket:
