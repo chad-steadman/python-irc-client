@@ -1,16 +1,18 @@
 #!/usr/bin/env python
-import os
+import os.path
 import config
+import tools
 
-DEFAULT_PORT = '6667'
-DEFAULT_AUTO_RECONNECT = 'True'
-DEFAULT_ENABLE_LOGGING = 'True'
-DEFAULT_CONFIG_FILE = 'config.cfg'
-DEFAULT_LOG_FILE = 'server.log'
+DEFAULT_PORT = '6667'                   # Default configuration port value for IRC connections
+DEFAULT_AUTO_RECONNECT = 'True'         # Default configuration auto_reconnect value
+DEFAULT_ENABLE_LOGGING = 'True'         # Default configuration enable_logging value
+DEFAULT_CONFIG_PATH = './config.cfg'    # Default path to the configuration file
+DEFAULT_LOG_PATH = './logs/server.log'  # Default path to the IRC log file
+DEBUG_MODE = False                      # Allows printing of socket debug messages
 
 
 class ClientConfig(config.Config):
-    def __init__(self, filename=DEFAULT_CONFIG_FILE):
+    def __init__(self, filename=DEFAULT_CONFIG_PATH):
         super().__init__(filename)
 
         # initialize default key/value pairs
@@ -29,112 +31,109 @@ class ClientConfig(config.Config):
         self.add_key('CONNECTION', 'autojoin_channels', '')
 
         self.add_section('PATHS')
-        self.add_key('PATHS', 'config_file', DEFAULT_CONFIG_FILE)
-        self.add_key('PATHS', 'log_file', DEFAULT_LOG_FILE)
+        self.add_key('PATHS', 'config_file', DEFAULT_CONFIG_PATH)
+        self.add_key('PATHS', 'log_file', DEFAULT_LOG_PATH)
 
     def save_client_config(self):
         # save existing configuration to a file
-        print('Saving client configuration to {}... '.format(self.get_filename()), end='')
-        if not self.save_to_file():
-            # failed to save file -- check for errors
-            print('Failed!')
+        tools.println('Saving client configuration to {}...'.format(self.get_filename()))
 
-            # check if file exists
+        if not self.save_to_file():
+            # failed to save file -- check for possible causes
+            error_message = 'Save failed: '
+
             if os.path.isfile(self.get_filename()):
                 # file exists but can't be written to
-                print('[ERROR] Cannot write to file. Check directory and/or file permissions.')
+                error_message += 'Cannot overwrite existing file. Check directory and/or file permissions.'
 
             else:
                 # file doesn't exist but can't be created
-                print('[ERROR] Could not save configuration file. Check the path and/or directory permissions.')
+                error_message += 'Cannot create new file. Check the path and/or directory permissions.'
 
-            raise IOError
+            tools.println(error_message, tools.SEVERITY['ERROR'])
+            raise IOError(error_message)
 
         else:
             # successfully saved configuration to file
-            print('Success!')
+            tools.println('Save succeeded.')
 
-    def load_client_config(self, first_load=False):
+    def load_client_config(self):
         # load existing configuration from a file
-        print('Loading client configuration from {}... '.format(self.get_filename()), end='')
+        tools.println('Loading client configuration from {}...'.format(self.get_filename()))
+
         if not self.load_from_file():
-            # failed to load file -- check for errors
-            print('Failed!')
+            # failed to load file -- check for possible causes
+            error_message = 'Load failed: '
 
-            # check if file exists
             if os.path.isfile(self.get_filename()):
-                # file exists but can't be accessed
-                print('[ERROR] Cannot access file. Check directory and/or file permissions.')
-                raise IOError
-
-            elif first_load:
-                # file doesn't exist on startup -- make a new, empty configuration file then exit program
-                print('File not found. Creating new empty configuration file... ', end='')
-                if not self.save_to_file():
-                    # failed to save new configuration file
-                    print('Failed!\n[ERROR] Could not save new configuration file. Check the path and/or directory permissions.')
-                    raise IOError
-
-                else:
-                    # successfully saved new configuration file
-                    print('Success!')
+                # file exists but can't be opened
+                error_message += 'Cannot open existing file. Check directory and/or file permissions.'
+                tools.println(error_message, tools.SEVERITY['ERROR'])
+                raise IOError(error_message)
 
             else:
-                # file doesn't exist on subsequent loads --
-                print('[ERROR] File not found. Check the path and/or filename.')
-                raise IOError
+                # file does not exist or path is wrong -- try to create a new file
+                error_message += 'Path is incorrect or file does not exist.'
+                tools.println(error_message, tools.SEVERITY['WARN'])
+                tools.println('Attempting to create a new, empty configuration file...')
+
+                try:
+                    self.save_client_config()
+
+                except IOError:
+                    raise
 
         else:
             # successfully loaded configuration from file
-            print('Success!')
+            tools.println('Load succeeded.')
 
     def get_nickname(self):
         # return the value of 'nickname' stored in the IDENTITY section
-        return self.get_key('IDENTITY', 'nickname')
+        return str(self.get_key('IDENTITY', 'nickname'))
 
     def get_username(self):
         # return the value of 'username' stored in the IDENTITY section
-        return self.get_key('IDENTITY', 'username')
+        return str(self.get_key('IDENTITY', 'username'))
 
     def get_realname(self):
         # return the value of 'realname' stored in the IDENTITY section
-        return self.get_key('IDENTITY', 'realname')
+        return str(self.get_key('IDENTITY', 'realname'))
 
     def get_nickservpass(self):
         # return the value of 'nickserv_password' stored in the IDENTITY section
-        return self.get_key('IDENTITY', 'nickserv_password')
+        return str(self.get_key('IDENTITY', 'nickserv_password'))
 
     def get_serveraddress(self):
         # return the value of 'server_address' stored in the CONNECTION section
-        return self.get_key('CONNECTION', 'server_address')
+        return str(self.get_key('CONNECTION', 'server_address'))
 
     def get_serverport(self):
         # return the value of 'server_port' stored in the CONNECTION section
-        return self.get_key('CONNECTION', 'server_port')
+        return str(self.get_key('CONNECTION', 'server_port'))
 
     def get_serverpass(self):
         # return the value of 'server_password' stored in the CONNECTION section
-        return self.get_key('CONNECTION', 'server_password')
+        return str(self.get_key('CONNECTION', 'server_password'))
 
     def get_autoreconnect(self):
         # return the value of 'auto_reconnect' stored in the CONNECTION section
-        return self.get_key('CONNECTION', 'auto_reconnect')
+        return str(self.get_key('CONNECTION', 'auto_reconnect'))
 
     def get_enablelogging(self):
         # return the value of 'enable_logging' stored in the CONNECTION section
-        return self.get_key('CONNECTION', 'enable_logging')
+        return str(self.get_key('CONNECTION', 'enable_logging'))
 
     def get_autojoinchans(self):
         # return the value of 'autojoin_channels' stored in the CONNECTION section
-        return self.get_key('CONNECTION', 'autojoin_channels')
+        return str(self.get_key('CONNECTION', 'autojoin_channels'))
 
     def get_configfile(self):
         # return the value of 'config_file' stored in the PATHS section
-        return self.get_key('PATHS', 'config_file')
+        return str(self.get_key('PATHS', 'config_file'))
 
     def get_logfile(self):
         # return the value of 'log_file' stored in the PATHS section
-        return self.get_key('PATHS', 'log_file')
+        return str(self.get_key('PATHS', 'log_file'))
 
     def set_nickname(self, nickname):
         # sets the value of 'nickname'
