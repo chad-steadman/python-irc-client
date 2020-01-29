@@ -39,7 +39,6 @@ Thumbs.db
 # My files #
 ############
 *.cfg
-*.log
 .idea
 __pycache__
 *.bak
